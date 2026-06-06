@@ -22,8 +22,6 @@ jobs:
 
       - name: Build application
         run: |
-          rm -rf build
-
           docker build \
             -t docker-build \
             -f DockerfileBuild \
@@ -37,10 +35,6 @@ jobs:
             echo "Build failed"
             exit 1
           fi
-
-          rm -rf build/runtimes/win*
-          rm -rf build/runtimes/osx*
-          rm -rf build/ru-*
 
       - name: Build and Push Docker image
         uses: docker/build-push-action@v6
