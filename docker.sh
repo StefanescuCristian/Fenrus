@@ -3,10 +3,10 @@
 # note: need to run the following to install dockerx for building both x64 and arm64
 # docker buildx install
 
-hyperlink(){ 
+hyperlink(){
   printf '\033[0;32m'
   printf "$1"
-  printf ':\033[0m '; 
+  printf ':\033[0m ';
   printf '\e]8;;%s\e\\%s\e]8;;\e\\' "$2" "${3:-$2}";
   echo
 }
@@ -14,7 +14,7 @@ hyperlink(){
 cleanup() {
   rm -rf build >/dev/null 2>&1
   docker buildx rm fenrusbuilder >/dev/null 2>&1
-  exit  
+  exit
 }
 get_version() {
   local date=$(date -u -d "+12 hours" +"%y.%m") # NZST date (yy.MM)
@@ -34,7 +34,7 @@ if [ -d "build" ]; then
   exit
 fi
 
-docker build -t docker-build -f DockerfileBuild . && docker run --rm -v "$(pwd)/build:/build" docker-build
+docker build -t docker-build -f DockerfileBuild . && docker run --env-file ./.env --rm -v "$(pwd)/build:/build" docker-build
 if [ -n "$(find "build" -maxdepth 0 -type d -empty 2>/dev/null)" ]; then
   echo "Build failed"
   exit 1
@@ -53,7 +53,7 @@ if [ "$1" = "--publish" ]; then
     -f Dockerfile .
 
 elif [ "$1" = "--dev" ]; then
-  docker buildx build --push --platform linux/arm64,linux/amd64 -t revenz/fenrus:develop -f Dockerfile .  
+  docker buildx build --push --platform linux/arm64,linux/amd64 -t revenz/fenrus:develop -f Dockerfile .
   # docker buildx build --push --platform linux/amd64 -t revenz/fenrus:develop -f Dockerfile .
 else
   docker buildx build -t fenrus --platform linux/amd64 -f Dockerfile .
@@ -72,34 +72,34 @@ if [ "$1" = "--publish" ]; then
   #   docker tag fenrus revenz/fenrus
   #   docker push revenz/fenrus
   #   docker tag fenrus revenz/fenrus:latest
-  #   docker push revenz/fenrus:latest    
+  #   docker push revenz/fenrus:latest
   #   docker tag fenrus revenz/fenrus:$version
   #   docker push revenz/fenrus:$version
   # else
   #     # do something else
-  #   echo Exited without pushing 
+  #   echo Exited without pushing
   # fi
 elif [ "$1" = "--dev" ]; then
   echo Publishing develop docker image
   docker push revenz/fenrus:develop
 else
   echo Running docker image
-  
+
   path="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
   dirData=$path/temp/data
   mkdir -p $dirData
   dirLogs=$path/temp/data/logs
   mkdir -p $dirLogs
-  
+
   port=3000
-  
+
   if [ "$1" = "--port" ]; then
     port="$2"
   fi
-  
-  docker run -d -p $port:3000 -v $dirData:/app/data -e puid=1000 -e pgid=1000 --restart unless-stopped --name fenrus fenrus 
-  
+
+  docker run -d -p $port:3000 -v $dirData:/app/data -e puid=1000 -e pgid=1000 --restart unless-stopped --name fenrus fenrus
+
   hyperlink 'Data Directory' file://$dirData $dirData
-  hyperlink 'Logs Directory' file://$dirLogs $dirLogs 
+  hyperlink 'Logs Directory' file://$dirLogs $dirLogs
   hyperlink 'Fenrus App URL' http://localhost:$port http://localhost:$port
 fi
