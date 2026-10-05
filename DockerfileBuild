@@ -11,4 +11,4 @@ RUN chmod +x ./setversion.sh && ./setversion.sh
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release
-CMD dotnet publish -c Release -o /build /app/Fenrus.csproj
+CMD ["sh", "-c", "dotnet publish -c Release -o /build /app/Fenrus.csproj -p:SixLaborsLicenseKey=\"$SIXLABORS_LICENSE_KEY\""]
