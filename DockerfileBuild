@@ -9,6 +9,8 @@ COPY . ./
 # sets the version
 RUN chmod +x ./setversion.sh && ./setversion.sh
 # Restore as distinct layers
-RUN dotnet restore
+RUN --mount=type=secret,id=sixlabors_license \
+    SIXLABORS_LICENSE_KEY="$(cat /run/secrets/sixlabors_license)" \
+    dotnet restore -p:SixLaborsLicenseKey="$SIXLABORS_LICENSE_KEY"
 # Build and publish a release
 CMD ["sh", "-c", "dotnet publish -c Release -o /build /app/Fenrus.csproj -p:SixLaborsLicenseKey=\"$SIXLABORS_LICENSE_KEY\""]
