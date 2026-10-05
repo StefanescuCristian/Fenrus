@@ -35,7 +35,7 @@ builder.Services.AddMvc().AddRazorRuntimeCompilation();
 //to check if the app is running behind a reverse proxy
 ReverseProxySettings reverseProxySettings = builder.Configuration.GetSection(nameof(ReverseProxySettings)).Get<ReverseProxySettings>();
 
-if(reverseProxySettings.UseForwardedHeaders)
+if (reverseProxySettings?.UseForwardedHeaders == true)
 {
     ConfigureUsingForwardedHeaders(builder, reverseProxySettings);
 }
@@ -167,7 +167,7 @@ app.UseWhen(
     appBuilder => appBuilder.UseStaticFiles(new StaticFileOptions()
     {
         HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
-    
+
         OnPrepareResponse = (context) =>
         {
             var headers = context.Context.Response.GetTypedHeaders();
@@ -210,7 +210,7 @@ workers.ForEach(x => x.Stop());
 
 // Configure the app to use forwarded headers
 //If the app is running behind a reverse proxy, the app needs to be configured to use the forwarded headers
-//This means that X-Forwarded-For and X-Forwarded-Proto headers are used to determine if the request goes over https, 
+//This means that X-Forwarded-For and X-Forwarded-Proto headers are used to determine if the request goes over https,
 //but is using ssl termination
 void ConfigureUsingForwardedHeaders(WebApplicationBuilder webApplicationBuilder,
     ReverseProxySettings reverseProxySettings1)
