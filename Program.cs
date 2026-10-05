@@ -33,7 +33,7 @@ builder.Services.AddMvc().AddRazorRuntimeCompilation();
 
 //Gets the reverse proxy settings from the appsettings.json file
 //to check if the app is running behind a reverse proxy
-ReverseProxySettings reverseProxySettings = builder.Configuration.GetSection(nameof(ReverseProxySettings)).Get<ReverseProxySettings>();
+ReverseProxySettings reverseProxySettings = builder.Configuration.GetSection(nameof(ReverseProxySettings)).Get<ReverseProxySettings>() ?? new ReverseProxySettings();
 
 if (reverseProxySettings?.UseForwardedHeaders == true)
 {
@@ -118,7 +118,7 @@ else
 
 var app = builder.Build();
 
-if(reverseProxySettings.UseForwardedHeaders)
+if (reverseProxySettings?.UseForwardedHeaders == true)
     app.UseForwardedHeaders();
 
 app.Use(async (context, next) =>
