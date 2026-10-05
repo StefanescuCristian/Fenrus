@@ -35,9 +35,8 @@ jobs:
             .
 
           docker run --rm \
-          -e SIXLABORS_LICENSE_KEY="${{ secrets.SIXLABORS_LICENSE_KEY }}" \
-          -v "${{ github.workspace }}/build:/build" \
-          docker-build
+            -v "${{ github.workspace }}/build:/build" \
+            docker-build
 
           if [ ! -d build ] || [ -z "$(ls -A build)" ]; then
             echo "Build failed"
